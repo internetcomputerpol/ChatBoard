@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhiteBoard Vanish Chat</title>
+    <script defer src="script.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+
+        #board {
+            flex-grow: 1;
+            width: 80%;
+            margin: 10px auto;
+            padding: 10px;
+            border-radius: 10px;
+            background: white;
+            overflow-y: auto; 
+            max-height: 70vh; 
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .message {
+            text-align: left;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 5px;
+            max-width: 70%;
+        }
+
+        .message:nth-child(odd) {
+            background: #d1e7ff;
+            align-self: flex-start;
+        }
+
+        .message:nth-child(even) {
+            background: #cfe9c8;
+            align-self: flex-end;
+        }
+
+        #input-area {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 10px;
+            box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #username {
+            width: 80%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        #message-box {
+            width: 80%;
+            display: flex;
+        }
+
+        #message {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        #sendBtn {
+            margin-left: 10px;
+            padding: 10px 20px;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #sendBtn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+     <h6>Blockchain ChatBoard</h6>
+     <strong><h7 span style="color:red">Ta dAppka jest to tylko Demo. Normalny Chat wymaga szyfrowania i innych bajerów</h7></strong>
+     <h7>Właściwie to taki ale Telnet ( w sensie brak szyfrowania otwarta komunikacja ) :D</h7>
+    <div id="board"></div>
+    <div id="input-area">
+        <input type="text" id="username" placeholder="Twoje imię (wymagane)" />
+        <div id="message-box">
+            <input type="text" id="message" placeholder="Wpisz wiadomość..." />
+            <button id="sendBtn" >Wyślij</button>
+        </div>
+    </div>
+</body>
+</html>
