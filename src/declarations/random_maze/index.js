@@ -1,43 +1,50 @@
-import { Actor, HttpAgent } from "@dfinity/agent";
+import { random_maze } from "../../declarations/random_maze";
 
-// Imports and re-exports candid interface
-import { idlFactory } from "./random_maze.did.js";
-export { idlFactory } from "./random_maze.did.js";
+let lastMessageCount = 0; 
 
-/* CANISTER_ID is replaced by webpack based on node environment
- * Note: canister environment variable will be standardized as
- * process.env.CANISTER_ID_<CANISTER_NAME_UPPERCASE>
- * beginning in dfx 0.15.0
- */
-export const canisterId =
-  process.env.CANISTER_ID_RANDOM_MAZE ||
-  process.env.RANDOM_MAZE_CANISTER_ID;
+async function sendMessage() {
+    const user = document.getElementById("username").value.trim();
+    const content = document.getElementById("message").value.trim();
 
-export const createActor = (canisterId, options = {}) => {
-  const agent = options.agent || new HttpAgent({ ...options.agentOptions });
+    if (user === "" || content === "") {
+        alert("Podaj imię i wiadomość!");
+        return;
+    }
 
-  if (options.agent && options.agentOptions) {
-    console.warn(
-      "Detected both agent and agentOptions passed to createActor. Ignoring agentOptions and proceeding with the provided agent."
-    );
-  }
+    await random_maze.addMessage(user, content);
+    document.getElementById("message").value = ""; 
 
-  // Fetch root key for certificate validation during development
-  if (process.env.DFX_NETWORK !== "ic") {
-    agent.fetchRootKey().catch((err) => {
-      console.warn(
-        "Unable to fetch root key. Check to ensure that your local replica is running"
-      );
-      console.error(err);
-    });
-  }
+    loadMessages();
+}
 
-  // Creates an actor with using the candid interface and the HttpAgent
-  return Actor.createActor(idlFactory, {
-    agent,
-    canisterId,
-    ...options.actorOptions,
-  });
+async function loadMessages() {
+    const messages = await random_maze.getMessages();
+    const board = document.getElementById("board");
+
+    if (messages.length === lastMessageCount) return;
+
+    for (let i = lastMessageCount; i < messages.length; i++) {
+        const msg = messages[i];
+        const div = document.createElement("div");
+        div.classList.add("message");
+        div.innerHTML = `<strong>${msg.user}:</strong> ${msg.content}`;
+        board.appendChild(div);
+    }
+
+    lastMessageCount = messages.length; 
+    board.scrollTop = board.scrollHeight;
+}
+
+window.onload = () => {
+    loadMessages();
+    setInterval(loadMessages, 1000);
 };
 
-export const random_maze = createActor(canisterId);
+document.getElementById("sendBtn").addEventListener("click", sendMessage);
+
+document.getElementById("message").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        event.preventDefault(); 
+        sendMessage(); 
+    }
+});
