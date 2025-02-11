@@ -1,5 +1,7 @@
 import { random_maze } from "../../declarations/random_maze";
 
+let lastMessageCount = 0; 
+
 async function sendMessage() {
     const user = document.getElementById("username").value.trim();
     const content = document.getElementById("message").value.trim();
@@ -10,28 +12,33 @@ async function sendMessage() {
     }
 
     await random_maze.addMessage(user, content);
-
     document.getElementById("message").value = ""; 
 
-    loadMessages(); 
+    loadMessages();
 }
 
 async function loadMessages() {
     const messages = await random_maze.getMessages();
     const board = document.getElementById("board");
-    board.innerHTML = ""; 
 
-    messages.forEach(msg => {
+    if (messages.length === lastMessageCount) return;
+
+    for (let i = lastMessageCount; i < messages.length; i++) {
+        const msg = messages[i];
         const div = document.createElement("div");
         div.classList.add("message");
         div.innerHTML = `<strong>${msg.user}:</strong> ${msg.content}`;
         board.appendChild(div);
-    });
+    }
 
+    lastMessageCount = messages.length; 
     board.scrollTop = board.scrollHeight;
 }
 
-window.onload = loadMessages;
+window.onload = () => {
+    loadMessages();
+    setInterval(loadMessages, 1000);
+};
 
 document.getElementById("sendBtn").addEventListener("click", sendMessage);
 
